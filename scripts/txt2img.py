@@ -11,12 +11,15 @@ from torchvision.utils import make_grid
 from pytorch_lightning import seed_everything
 from torch import autocast
 from contextlib import nullcontext
-from imwatermark import WatermarkEncoder
+# from imwatermark import WatermarkEncoder
 
 from ldm.util import instantiate_from_config
 from ldm.models.diffusion.ddim import DDIMSampler
 from ldm.models.diffusion.plms import PLMSSampler
 from ldm.models.diffusion.dpm_solver import DPMSolverSampler
+
+# 使用safetensor文件
+from safetensors.torch import load_file as load_safetensors
 
 torch.set_grad_enabled(False)
 
@@ -26,8 +29,9 @@ def chunk(it, size):
 
 
 def load_model_from_config(config, ckpt, device=torch.device("cuda"), verbose=False):
-    print(f"Loading model from {ckpt}")
-    pl_sd = torch.load(ckpt, map_location="cpu")
+    # print(f"Loading model from {ckpt}")
+    # sd = load_safetensors(ckpt)
+    pl_sd = torch.load(ckpt, map_location="cpu", weights_only=True)
     if "global_step" in pl_sd:
         print(f"Global Step: {pl_sd['global_step']}")
     sd = pl_sd["state_dict"]
@@ -228,10 +232,11 @@ def main(opt):
     os.makedirs(opt.outdir, exist_ok=True)
     outpath = opt.outdir
 
-    print("Creating invisible watermark encoder (see https://github.com/ShieldMnt/invisible-watermark)...")
-    wm = "SDV2"
-    wm_encoder = WatermarkEncoder()
-    wm_encoder.set_watermark('bytes', wm.encode('utf-8'))
+    # print("Creating invisible watermark encoder (see https://github.com/ShieldMnt/invisible-watermark)...")
+    # wm = "SDV2"
+    # wm_encoder = WatermarkEncoder()
+    # wm_encoder.set_watermark('bytes', wm.encode('utf-8'))
+    wm_encoder = None
 
     batch_size = opt.n_samples
     n_rows = opt.n_rows if opt.n_rows > 0 else batch_size

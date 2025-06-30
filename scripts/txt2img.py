@@ -19,7 +19,7 @@ from ldm.models.diffusion.plms import PLMSSampler
 from ldm.models.diffusion.dpm_solver import DPMSolverSampler
 
 # 使用safetensor文件
-from safetensors.torch import load_file as load_safetensors
+# from safetensors.torch import load_file as load_safetensors
 
 torch.set_grad_enabled(False)
 
@@ -31,7 +31,7 @@ def chunk(it, size):
 def load_model_from_config(config, ckpt, device=torch.device("cuda"), verbose=False):
     # print(f"Loading model from {ckpt}")
     # sd = load_safetensors(ckpt)
-    pl_sd = torch.load(ckpt, map_location="cpu", weights_only=True)
+    pl_sd = torch.load(ckpt, map_location="cpu",weights_only=False)
     if "global_step" in pl_sd:
         print(f"Global Step: {pl_sd['global_step']}")
     sd = pl_sd["state_dict"]

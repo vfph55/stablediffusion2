@@ -1,3 +1,5 @@
+import os
+os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 import torch
 import torch.nn as nn
 import kornia
@@ -7,6 +9,8 @@ from transformers import T5Tokenizer, T5EncoderModel, CLIPTokenizer, CLIPTextMod
 
 import open_clip
 from ldm.util import default, count_params, autocast
+
+
 
 
 class AbstractEncoder(nn.Module):
@@ -185,6 +189,7 @@ class FrozenOpenCLIPEmbedder(AbstractEncoder):
 
     def __init__(self, arch="ViT-H-14", version="laion2b_s32b_b79k", device="cuda", max_length=77,
                  freeze=True, layer="last"):
+        local_bin_path = "/root/autodl-tmp/stablediffusion2/pretrained/open_clip_pytorch_model.bin"
         super().__init__()
         assert layer in self.LAYERS
         model, _, _ = open_clip.create_model_and_transforms(arch, device=torch.device('cpu'), pretrained=version)
